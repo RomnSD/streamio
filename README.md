@@ -1,6 +1,6 @@
 ### Streamio 
 
-######A simple buffer library for Java.
+###### A simple buffer library for Java.
 
 In summary, Streamio allocates memory according to the needs, separating its content in memory blocks, for example:
 
@@ -47,6 +47,6 @@ If you would like to transfer the content to a ByteBuffer:
 
 <p>Streamio is still in progress, but if you would like to help, you can do it by submitting a pull request. I really would appreacite that.</p>
 
-#####Improvements to implement: 
+##### Improvements to implement: 
 - Checks parameters when trying creating a stream.
 - Choose the correct lookup table when calling a factory method.
