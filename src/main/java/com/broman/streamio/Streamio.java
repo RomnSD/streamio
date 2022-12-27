@@ -1,5 +1,7 @@
 package com.broman.streamio;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 /**
@@ -118,7 +120,7 @@ public class Streamio implements IStreamio, AutoCloseable {
     @Override
     public byte get(int index) {
         checkIndex(index);
-        Memory memory = findMemoryAt(blockIndex(index), false);
+        Memory memory = findMemoryAt(index, false);
 
         if (memory == null) {
             return defaultByte;
@@ -128,9 +130,21 @@ public class Streamio implements IStreamio, AutoCloseable {
     }
 
     @Override
+    public void put(int index, int value) {
+        put(index, (byte) value);
+    }
+
+    @Override
+    public void put(int index, byte[] value) {
+        for (int i = 0; i < value.length; i++) {
+            put(index + i, value[i]);
+        }
+    }
+
+    @Override
     public void put(int index, byte value) {
         checkIndex(index);
-        Memory memory = findMemoryAt(blockIndex(index), true);
+        Memory memory = findMemoryAt(index, true);
         memory.put(valueIndex(index), value);
     }
 
@@ -139,7 +153,7 @@ public class Streamio implements IStreamio, AutoCloseable {
         checkIndex(offset);
         checkIndex(length);
         try {
-            byte[] content = new byte[length - offset];
+            byte[] content = new byte[(length + 1) - offset];
             for (int i = 0; i < content.length; i++) {
                 content[i] = get(offset + i);
             }
@@ -149,6 +163,7 @@ public class Streamio implements IStreamio, AutoCloseable {
         }
     }
 
+    @Override
     public void writeTo(ByteBuffer buffer, int offset, int length) {
         checkIndex(offset);
         checkIndex(offset + length);
@@ -159,11 +174,30 @@ public class Streamio implements IStreamio, AutoCloseable {
             throw new IllegalArgumentException("offset > length");
         }
         if (buffer.remaining() >= length) {
-            while (offset != length) {
+            while (offset <= length) {
                 buffer.put(get(offset++));
             }
         } else {
             throw new IllegalArgumentException("There is not enough space for write in the provided buffer.");
+        }
+    }
+
+    @Override
+    public void writeTo(OutputStream stream, int offset, int length) {
+        checkIndex(offset);
+        checkIndex(offset + length);
+        if (offset == length) {
+            throw new IllegalArgumentException("offset == length");
+        }
+        if (offset > length) {
+            throw new IllegalArgumentException("offset > length");
+        }
+        try {
+            while (offset <= length) {
+                stream.write(get(offset++));
+            }
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
         }
     }
 
@@ -193,11 +227,12 @@ public class Streamio implements IStreamio, AutoCloseable {
         Memory memory = cache.get(index);
 
         if (memory == null) {
-            memory = table.getAt(index);
+            int blockIndex = blockIndex(index);
 
+            memory = table.getAt(blockIndex);
             if (memory == null) {
                 if (create && allocator != null) {
-                    memory = table.setAt(index, allocator.allocate(blockSize));
+                    memory = table.setAt(blockIndex, allocator.allocate(blockSize));
                 }
             }
 

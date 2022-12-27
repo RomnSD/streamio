@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 /**
  * @author Brayan Roman
- * @since  1.0.0
+ * @since 1.0.0
  */
 public class HeapMemoryAllocator implements MemoryAllocator {
 
@@ -27,5 +27,5 @@ public class HeapMemoryAllocator implements MemoryAllocator {
     public Memory allocate(ByteBuffer buffer) {
         return new HeapMemory(buffer.array());
     }
-    
+
 }

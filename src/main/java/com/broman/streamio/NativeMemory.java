@@ -8,7 +8,7 @@ import sun.misc.Unsafe;
 
 /**
  * @author Brayan Roman
- * @since  1.0.0
+ * @since 1.0.0
  */
 public class NativeMemory implements Memory {
 
@@ -21,8 +21,7 @@ public class NativeMemory implements Memory {
             field.setAccessible(true);
             UNSAFE = (Unsafe) field.get(null);
             ADDRESS_FIELD = UNSAFE.objectFieldOffset(Buffer.class.getDeclaredField("address"));
-        }
-        catch (IllegalAccessException | NoSuchFieldException | SecurityException exception) {
+        } catch (IllegalAccessException | NoSuchFieldException | SecurityException exception) {
             throw new RuntimeException(exception);
         }
     }
@@ -36,8 +35,7 @@ public class NativeMemory implements Memory {
             size = buffer.capacity();
             address = UNSAFE.getLong(buffer, ADDRESS_FIELD);
             attachment = buffer;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("buffer is not direct");
         }
     }

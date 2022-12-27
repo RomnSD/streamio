@@ -2,7 +2,7 @@ package com.broman.streamio;
 
 /**
  * @author Brayan Roman
- * @since  1.0.0
+ * @since 1.0.0
  */
 public class HeapMemory implements Memory {
 
@@ -38,5 +38,5 @@ public class HeapMemory implements Memory {
     public void close() {
         this.bytes = new byte[0];
     }
-    
+
 }

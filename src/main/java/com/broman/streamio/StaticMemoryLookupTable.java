@@ -1,10 +1,10 @@
 package com.broman.streamio;
 
 import static java.util.Arrays.fill;
- 
+
 /**
  * @author Brayan Roman
- * @since  1.0.0
+ * @since 1.0.0
  */
 public class StaticMemoryLookupTable implements MemoryLookupTable {
 

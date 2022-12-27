@@ -4,7 +4,7 @@ import static java.util.Arrays.copyOf;
 
 /**
  * @author Brayan Roman
- * @since  1.0.0
+ * @since 1.0.0
  */
 public class DynamicMemoryLookupTable implements MemoryLookupTable {
 
