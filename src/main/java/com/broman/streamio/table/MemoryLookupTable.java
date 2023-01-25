@@ -1,4 +1,7 @@
-package com.broman.streamio;
+package com.broman.streamio.table;
+
+import com.broman.streamio.Memory;
+import com.broman.streamio.MemoryPool;
 
 /**
  * <p>
@@ -10,8 +13,8 @@ package com.broman.streamio;
  * </p>
  *
  * @author Brayan Roman
- * @since 1.0.0
- * @see Memory
+ * @since  1.0.0
+ * @see    Memory
  */
 public interface MemoryLookupTable extends AutoCloseable {
 
@@ -38,5 +41,16 @@ public interface MemoryLookupTable extends AutoCloseable {
      * @return the memory block that has been set.
      */
     Memory setAt(int index, Memory memory);
+
+    /**
+     * <p>
+     * Offer all the memory blocks of this table to a pool.</p>
+     * 
+     * <p>
+     * This method is similar to {@link #close()}, but it does not close the memory blocks.</p>
+     *
+     * @param pool the pool to offer the memory blocks.
+     */
+    void offer(MemoryPool pool);
 
 }

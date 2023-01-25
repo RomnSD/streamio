@@ -1,16 +1,19 @@
-package com.broman.streamio;
+package com.broman.streamio.memory;
 
 import java.nio.ByteBuffer;
 
+import com.broman.streamio.Memory;
+import com.broman.streamio.MemoryAllocator;
+
 /**
  * @author Brayan Roman
- * @since 1.0.0
+ * @since  1.0.0
  */
 public class NativeMemoryAllocator implements MemoryAllocator {
 
     @Override
-    public Memory allocate() {
-        return new NativeMemory(512);
+    public MemoryType getType() {
+        return MemoryType.NATIVE;
     }
 
     @Override

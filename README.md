@@ -50,3 +50,4 @@ If you would like to transfer the content to a ByteBuffer:
 ##### Improvements to implement: 
 - Checks parameters when trying creating a stream.
 - Choose the correct lookup table when calling a factory method.
+- Implement library exceptions 

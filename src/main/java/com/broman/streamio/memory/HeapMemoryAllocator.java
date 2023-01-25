@@ -1,16 +1,19 @@
-package com.broman.streamio;
+package com.broman.streamio.memory;
 
 import java.nio.ByteBuffer;
 
+import com.broman.streamio.Memory;
+import com.broman.streamio.MemoryAllocator;
+
 /**
  * @author Brayan Roman
- * @since 1.0.0
+ * @since  1.0.0
  */
 public class HeapMemoryAllocator implements MemoryAllocator {
 
     @Override
-    public Memory allocate() {
-        return new HeapMemory(512);
+    public MemoryType getType() {
+        return MemoryType.HEAP;
     }
 
     @Override

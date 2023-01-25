@@ -4,11 +4,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+import com.broman.streamio.memory.NativeMemory;
+import com.broman.streamio.memory.NativeMemoryAllocator;
+import com.broman.streamio.memory.HeapMemory;
+import com.broman.streamio.memory.HeapMemoryAllocator;
+import com.broman.streamio.table.DynamicMemoryLookupTable;
+import com.broman.streamio.table.MemoryLookupTable;
+import com.broman.streamio.table.StaticMemoryLookupTable;
+
 /**
  * @author Brayan Roman
  * @since  1.0.0
  */
-public class Streamio implements IStreamio, AutoCloseable {
+public class Streamio implements IStreamio {
 
     private final static int MAX_SIZE = 1024 * 1024;
     private final static int MAX_BLOCK_SIZE = 1024;
@@ -94,12 +102,18 @@ public class Streamio implements IStreamio, AutoCloseable {
 
     private byte defaultByte = 0;
     private CachedMemory cache = CachedMemory.NULL;
+    private MemoryPool pool;
 
     Streamio(int size, int blockSize, MemoryAllocator allocator, MemoryLookupTable table) {
         this.size = size;
         this.blockSize = blockSize;
         this.allocator = allocator;
         this.table = table;
+    }
+
+    @Override
+    public MemoryAllocator allocator() {
+        return allocator;
     }
 
     @Override
@@ -115,6 +129,10 @@ public class Streamio implements IStreamio, AutoCloseable {
     @Override
     public void defaultByte(byte value) {
         this.defaultByte = value;
+    }
+
+    public void useMemoryPool(MemoryPool pool) {
+        this.pool = pool;
     }
 
     @Override
@@ -232,7 +250,11 @@ public class Streamio implements IStreamio, AutoCloseable {
             memory = table.getAt(blockIndex);
             if (memory == null) {
                 if (create && allocator != null) {
-                    memory = table.setAt(blockIndex, allocator.allocate(blockSize));
+                    if (pool == null) {
+                        memory = table.setAt(blockIndex, allocator.allocate(blockSize));
+                    } else {
+                        memory = table.setAt(blockIndex, pool.get(allocator));
+                    }
                 }
             }
 
@@ -247,6 +269,7 @@ public class Streamio implements IStreamio, AutoCloseable {
     @Override
     public void close() {
         try {
+            table.offer(pool);
             table.close();
         } catch (Exception exception) {
             throw new RuntimeException(exception);
@@ -256,7 +279,6 @@ public class Streamio implements IStreamio, AutoCloseable {
     }
 
     public record CachedMemory(Memory memory, int min, int max) {
-
         static CachedMemory NULL = of(null, -1, -1);
 
         static CachedMemory of(Memory memory, int ind, int bsz) {
@@ -271,6 +293,11 @@ public class Streamio implements IStreamio, AutoCloseable {
             }
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Streamio(pool=" + pool + ")";
     }
 
 }

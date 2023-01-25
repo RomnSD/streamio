@@ -2,19 +2,24 @@ package com.broman.streamio;
 
 import java.nio.ByteBuffer;
 
+import com.broman.streamio.memory.MemoryType;
+
 /**
+ * <p>
+ * A MemoryAllocator is responsible for creating {@code Memory} instances.</p>
+ * 
  * @author Brayan Roman
- * @since 1.0.0
+ * @since  1.0.0
  */
 public interface MemoryAllocator {
 
     /**
      * <p>
-     * Allocate a new memory block using the implementation default values.</p>
-     *
-     * @return the created Memory instance.
+     * Get the type of memory this allocator creates.</p>
+     * 
+     * @return the type of memory this allocator creates.
      */
-    Memory allocate();
+    MemoryType getType();
 
     /**
      * <p>

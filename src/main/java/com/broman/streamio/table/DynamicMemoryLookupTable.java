@@ -1,19 +1,29 @@
-package com.broman.streamio;
+package com.broman.streamio.table;
 
 import static java.util.Arrays.copyOf;
 
+import com.broman.streamio.Memory;
+import com.broman.streamio.MemoryPool;
+import com.broman.streamio.Streamio;
+
 /**
+ * <p>
+ * A dynamic memory lookup table that uses a hashtable to store memory instances.</p>
+ * 
+ * <p>
+ * This table is useful for when the number of memory blocks is unknown at the time of creation.</p>
+ * 
  * @author Brayan Roman
- * @since 1.0.0
+ * @since  1.0.0
  */
 public class DynamicMemoryLookupTable implements MemoryLookupTable {
 
     public final int size;
-    public final MemoryTable buffers;
+    public final MemoryTable table;
 
-    public DynamicMemoryLookupTable(int size, int blockSize) {
-        this.size = Streamio.blockIndexes(size, blockSize);
-        this.buffers = new MemoryTable(this.size, MemoryTable.DEFAULT_LOAD_FACTOR);
+    public DynamicMemoryLookupTable(int maxSize, int blockSize) {
+        this.size = Streamio.blockIndexes(maxSize, blockSize);
+        this.table = new MemoryTable(this.size, MemoryTable.DEFAULT_LOAD_FACTOR);
     }
 
     @Override
@@ -23,18 +33,26 @@ public class DynamicMemoryLookupTable implements MemoryLookupTable {
 
     @Override
     public Memory getAt(int index) {
-        return buffers.get(index);
+        return table.get(index);
     }
 
     @Override
     public Memory setAt(int index, Memory memory) {
-        buffers.put(index, memory);
+        table.put(index, memory);
         return memory;
     }
 
     @Override
+    public void offer(MemoryPool pool) {
+        if (pool != null) {
+            table.offer(pool);
+        }
+        table.clear();
+    }
+
+    @Override
     public void close() {
-        buffers.clear();
+        table.close();
     }
 
     /**
@@ -133,6 +151,23 @@ public class DynamicMemoryLookupTable implements MemoryLookupTable {
 
         void clear() {
             table = new MemoryEntry[Math.min(DEFAULT_SIZE, maxSize)];
+        }
+
+        protected void offer(MemoryPool pool) {
+            for (MemoryEntry entry : table) {
+                if (entry != null) {
+                    pool.offer(entry.val);
+                }
+            }
+        }
+
+        public void close() {
+            for (MemoryEntry entry : table) {
+                if (entry != null) {
+                    entry.val.close();
+                }
+            }
+            clear();
         }
 
         static class MemoryEntry {

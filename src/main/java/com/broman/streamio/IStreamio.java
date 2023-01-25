@@ -4,10 +4,21 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 /**
+ * <p>
+ * A stream of bytes.</p>
+ * 
  * @author Brayan Roman
- * @since 1.0.0
+ * @since  1.0.0
  */
-public interface IStreamio {
+public interface IStreamio extends AutoCloseable {
+
+    /**
+     * <p>
+     * Get the memory allocator used by this stream.</p>
+     *
+     * @return the memory allocator used by this stream.
+     */
+    MemoryAllocator allocator();
 
     /**
      * <p>
