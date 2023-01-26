@@ -1,14 +1,16 @@
 package com.broman.streamio.io;
 
+import com.broman.streamio.io.encoding.BigEndian;
+import com.broman.streamio.io.encoding.IntEncoding;
+import com.broman.streamio.io.encoding.LittleEndian;
+import com.broman.streamio.io.encoding.VarInt;
+
 /**
- * <p>
- * The encoding of the memory.</p>
- * 
  * @author Brayan Roman
  * @since  1.0.0
  */
-public enum MemoryEncoding {
-    BigEndian   , // BigEndian is encoded with the most significant byte first.
-    LittleEndian, // LittleEndian is encoded with the least significant byte first.
-    VarInt        // Varint is a special case for reading variable length integers.
+public final class MemoryEncoding {
+    public static final IntEncoding BIG_ENDIAN = new BigEndian();
+    public static final IntEncoding LITTLE_ENDIAN = new LittleEndian();
+    public static final IntEncoding VARINT = new VarInt();
 }

@@ -1,18 +1,19 @@
 package com.broman.streamio.io;
 
+import com.broman.streamio.io.encoding.IntEncoding;
 import com.broman.streamio.serialization.SerializationRegistry;
 
 public abstract class AbstractMemoryManagement implements MemoryManagement {
 
     protected MemoryIndex index;
-    protected MemoryEncoding encoding;
+    protected IntEncoding encoding;
     protected SerializationRegistry serializers;
 
     public AbstractMemoryManagement() {
-        this(new MemoryIndex(0), MemoryEncoding.BigEndian);
+        this(new MemoryIndex(0), MemoryEncoding.BIG_ENDIAN);
     }
 
-    public AbstractMemoryManagement(MemoryIndex index, MemoryEncoding encoding) {
+    public AbstractMemoryManagement(MemoryIndex index, IntEncoding encoding) {
         setIndex(index);
         setEncoding(encoding);
     }
@@ -31,7 +32,7 @@ public abstract class AbstractMemoryManagement implements MemoryManagement {
     }
 
     @Override
-    public void setEncoding(MemoryEncoding encoding) {
+    public void setEncoding(IntEncoding encoding) {
         if (encoding == null) {
             throw new NullPointerException("Encoding cannot be null");
         }
@@ -39,7 +40,7 @@ public abstract class AbstractMemoryManagement implements MemoryManagement {
     }
 
     @Override
-    public MemoryEncoding getEncoding() {
+    public IntEncoding getEncoding() {
         return encoding;
     }
 

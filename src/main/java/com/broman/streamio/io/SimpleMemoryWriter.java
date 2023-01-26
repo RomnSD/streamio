@@ -1,6 +1,7 @@
 package com.broman.streamio.io;
 
 import com.broman.streamio.IStreamio;
+import com.broman.streamio.io.encoding.IntEncoding;
 import com.broman.streamio.serialization.ObjectSerializer;
 
 public class SimpleMemoryWriter extends AbstractMemoryManagement implements MemoryWriter {
@@ -8,15 +9,15 @@ public class SimpleMemoryWriter extends AbstractMemoryManagement implements Memo
     private IStreamio streamio;
 
     public SimpleMemoryWriter(IStreamio streamio) {
-        this(streamio, new MemoryIndex(0), MemoryEncoding.BigEndian);
+        this(streamio, new MemoryIndex(0), MemoryEncoding.BIG_ENDIAN);
     }
 
-    public SimpleMemoryWriter(IStreamio streamio, MemoryEncoding endianess) {
-        this(streamio, new MemoryIndex(0), endianess);
+    public SimpleMemoryWriter(IStreamio streamio, IntEncoding encoding) {
+        this(streamio, new MemoryIndex(0), encoding);
     }
 
-    public SimpleMemoryWriter(IStreamio streamio, MemoryIndex index, MemoryEncoding endianess) {
-        super(index, endianess);
+    public SimpleMemoryWriter(IStreamio streamio, MemoryIndex index, IntEncoding encoding) {
+        super(index, encoding);
         if (streamio == null) {
             throw new NullPointerException("Streamio cannot be null");
         }
@@ -35,100 +36,80 @@ public class SimpleMemoryWriter extends AbstractMemoryManagement implements Memo
 
     @Override
     public void writeShort(short value) {
-        writeShort(index, value);
+        encoding.putSInt16(value, streamio, index);
     }
 
     @Override
     public void writeShort(MemoryIndex index, short value) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            streamio.put(index.inc(), (byte) (value >> 8));
-            streamio.put(index.inc(), (byte) value);
-            return;
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            streamio.put(index.inc(), (byte) value);
-            streamio.put(index.inc(), (byte) (value >> 8));
-            return;
-        }
-        writeUnsignedVarInt(index, value); 
+        encoding.putSInt16(value, streamio, index);
+    }
+
+    @Override
+    public void writeUShort(short value) {
+        encoding.putUInt16(value, streamio, index);
+    }
+
+    @Override
+    public void writeUShort(MemoryIndex index, short value) {
+        encoding.putUInt16(value, streamio, index);
     }
 
     @Override
     public void writeMedium(int value) {
-        writeMedium(index, value);
+        encoding.putSInt24(value, streamio, index);
     }
 
     @Override
     public void writeMedium(MemoryIndex index, int value) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            streamio.put(index.inc(), (byte) (value >> 16));
-            streamio.put(index.inc(), (byte) (value >> 8));
-            streamio.put(index.inc(), (byte) value);
-            return;
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            streamio.put(index.inc(), (byte) value);
-            streamio.put(index.inc(), (byte) (value >> 8));
-            streamio.put(index.inc(), (byte) (value >> 16));
-            return;
-        }
-        writeUnsignedVarInt(index, value);   
+        encoding.putSInt24(value, streamio, index); 
+    }
+
+    @Override
+    public void writeUMedium(int value) {
+        encoding.putUInt24(value, streamio, index);
+    }
+
+    @Override
+    public void writeUMedium(MemoryIndex index, int value) {
+        encoding.putUInt24(value, streamio, index);
     }
 
     @Override
     public void writeInt(int value) {
-        writeInt(index, value);
+        encoding.putSInt32(value, streamio, index);
     }
 
     @Override
     public void writeInt(MemoryIndex index, int value) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            streamio.put(index.inc(), (byte) (value >> 24));
-            streamio.put(index.inc(), (byte) (value >> 16));
-            streamio.put(index.inc(), (byte) (value >> 8 ));
-            streamio.put(index.inc(), (byte) (value      ));
-            return;
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            streamio.put(index.inc(), (byte) (value      ));
-            streamio.put(index.inc(), (byte) (value >> 8 ));
-            streamio.put(index.inc(), (byte) (value >> 16));
-            streamio.put(index.inc(), (byte) (value >> 24));
-            return;
-        }
-        writeUnsignedVarInt(value);
+        encoding.putSInt32(value, streamio, index);
+    }
+
+    public void writeUInt(int value) {
+        encoding.putUInt32(value, streamio, index);
+    }
+
+    public void writeUInt(MemoryIndex index, int value) {
+        encoding.putUInt32(value, streamio, index);
     }
 
     @Override
     public void writeLong(long value) {
-        writeLong(index, value);
+        encoding.putSInt64(value, streamio, index);
     }
 
     @Override
     public void writeLong(MemoryIndex index, long value) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            streamio.put(index.inc(), (byte) (value >> 56));
-            streamio.put(index.inc(), (byte) (value >> 48));
-            streamio.put(index.inc(), (byte) (value >> 40));
-            streamio.put(index.inc(), (byte) (value >> 32));
-            streamio.put(index.inc(), (byte) (value >> 24));
-            streamio.put(index.inc(), (byte) (value >> 16));
-            streamio.put(index.inc(), (byte) (value >> 8 ));
-            streamio.put(index.inc(), (byte) (value      ));
-            return;
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            streamio.put(index.inc(), (byte) (value      ));
-            streamio.put(index.inc(), (byte) (value >> 8 ));
-            streamio.put(index.inc(), (byte) (value >> 16));
-            streamio.put(index.inc(), (byte) (value >> 24));
-            streamio.put(index.inc(), (byte) (value >> 32));
-            streamio.put(index.inc(), (byte) (value >> 40));
-            streamio.put(index.inc(), (byte) (value >> 48));
-            streamio.put(index.inc(), (byte) (value >> 56));
-            return;
-        }
-        writeUnsignedVarLong(value);
+        encoding.putSInt64(value, streamio, index);
+    }
+
+    @Override
+    public void writeULong(long value) {
+        encoding.putUInt64(value, streamio, index);
+    }
+
+    @Override
+    public void writeULong(MemoryIndex index, long value) {
+        encoding.putUInt64(value, streamio, index);
     }
 
     @Override
@@ -142,6 +123,16 @@ public class SimpleMemoryWriter extends AbstractMemoryManagement implements Memo
     }
 
     @Override
+    public void writeUFloat(float value) {
+        writeUFloat(index, value);
+    }
+
+    @Override
+    public void writeUFloat(MemoryIndex index, float value) {
+        writeUInt(index, Float.floatToIntBits(value));
+    }
+
+    @Override
     public void writeDouble(double value) {
         writeDouble(index, value);
     }
@@ -149,6 +140,16 @@ public class SimpleMemoryWriter extends AbstractMemoryManagement implements Memo
     @Override
     public void writeDouble(MemoryIndex index, double value) {
         writeLong(index, Double.doubleToLongBits(value));
+    }
+
+    @Override
+    public void writeUDouble(double value) {
+        writeUDouble(index, value);
+    }
+
+    @Override
+    public void writeUDouble(MemoryIndex index, double value) {
+        writeULong(index, Double.doubleToLongBits(value));
     }
 
     @Override
@@ -212,61 +213,6 @@ public class SimpleMemoryWriter extends AbstractMemoryManagement implements Memo
     }
 
     @Override
-    public void writeSignedVarInt(int value) {
-        writeSignedVarInt(index, value);
-    }
-
-    @Override
-    public void writeSignedVarInt(MemoryIndex index, int value) {
-        writeUnsignedVarInt(index, (value << 1) ^ (value >> 31));
-    }
-
-    @Override
-    public void writeUnsignedVarInt(int value) {
-        writeUnsignedVarInt(index, value);
-    }
-
-    @Override
-    public void writeUnsignedVarInt(MemoryIndex index, int value) {
-        int temp;
-        do {
-            temp = value & 0x7F;
-            value >>>= 7;
-            streamio.put(index.inc(), (byte) (temp + (value == 0 ? 0 : 0x80)));
-        } while (value != 0);
-    }
-
-    @Override
-    public void writeSignedVarLong(long value) {
-        writeSignedVarLong(index, value);
-    }
-
-    @Override
-    public void writeSignedVarLong(MemoryIndex index, long value) {
-        writeUnsignedVarLong(index, (value << 1) ^ (value >> 63));
-    }
-
-    @Override
-    public void writeUnsignedVarLong(long value) {
-        long temp;
-        do {
-            temp = value & 0x7F;
-            value >>>= 7;
-            streamio.put(index.inc(), (byte) (temp + (value == 0 ? 0 : 0x80)));
-        } while (value != 0);
-    }
-
-    @Override
-    public void writeUnsignedVarLong(MemoryIndex index, long value) {
-        long temp;
-        do {
-            temp = value & 0x7F;
-            value >>>= 7;
-            streamio.put(index.inc(), (byte) (temp + (value == 0 ? 0 : 0x80)));
-        } while (value != 0);
-    }
-
-    @Override
     public<T> void writeObject(T object) {
         writeObject(object, object == null ? null : java.util.Objects.requireNonNull(serializers).find(object.getClass()));
     }
@@ -278,8 +224,8 @@ public class SimpleMemoryWriter extends AbstractMemoryManagement implements Memo
         serializer.serialize(object, this);
     } 
 
-    public MemoryWriter writer(MemoryEncoding endianess) {
-        return new SimpleMemoryWriter(streamio, index, endianess);
+    public MemoryWriter writer(IntEncoding encoding) {
+        return new SimpleMemoryWriter(streamio, index, encoding);
     }
 
     public SimpleMemoryWriter writer(MemoryIndex index) {

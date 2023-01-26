@@ -45,6 +45,9 @@ public interface MemoryReader extends MemoryManagement {
      */
     short readShort(MemoryIndex index);
 
+    short readUShort();
+    short readUShort(MemoryIndex index);
+
     /**
      * <p>
      * Reads a medium from the memory.</p>
@@ -61,6 +64,9 @@ public interface MemoryReader extends MemoryManagement {
      * @return      The medium read from the memory.
      */
     int readMedium(MemoryIndex index);
+
+    int readUMedium();
+    int readUMedium(MemoryIndex index);
 
     /**
      * <p>
@@ -79,6 +85,9 @@ public interface MemoryReader extends MemoryManagement {
      */
     int readInt(MemoryIndex index);
 
+    int readUInt();
+    int readUInt(MemoryIndex index);
+
     /**
      * <p>
      * Reads a long from the memory.</p>
@@ -95,6 +104,9 @@ public interface MemoryReader extends MemoryManagement {
      * @return      The long read from the memory.
      */
     long readLong(MemoryIndex index);
+
+    long readULong();
+    long readULong(MemoryIndex index);
 
     /**
      * <p>
@@ -113,6 +125,9 @@ public interface MemoryReader extends MemoryManagement {
      */
     float readFloat(MemoryIndex index);
 
+    float readUFloat();
+    float readUFloat(MemoryIndex index);
+
     /**
      * <p>
      * Reads a double from the memory.</p>
@@ -130,73 +145,8 @@ public interface MemoryReader extends MemoryManagement {
      */
     double readDouble(MemoryIndex index);
 
-    /**
-     * <p>
-     * Reads a signed VarInt from the memory.</p>
-     * 
-     * @return The VarInt read from the memory.
-     */
-    int readSignedVarInt();
-
-    /**
-     * <p>
-     * Reads a signed VarInt from the memory at the specified index.</p>
-     * 
-     * @param index The index to read the VarInt from.
-     * @return      The VarInt read from the memory.
-     */
-    int readSignedVarInt(MemoryIndex index);
-
-    /**
-     * <p>
-     * Reads an unsigned VarInt from the memory.</p>
-     * 
-     * @return The VarInt read from the memory.
-     */
-    int readUnsignedVarInt();
-
-    /**
-     * <p>
-     * Reads an unsigned VarInt from the memory at the specified index.</p>
-     * 
-     * @param index The index to read the VarInt from.
-     * @return      The VarInt read from the memory.
-     */
-    int readUnsignedVarInt(MemoryIndex index);
-
-    /**
-     * <p>
-     * Reads an unsigned VarLong from the memory.</p>
-     * 
-     * @return The VarLong read from the memory.
-     */
-    long readUnsignedVarLong();
-
-    /**
-     * <p>
-     * Reads an unsigned VarLong from the memory at the specified index.</p>
-     * 
-     * @param index The index to read the VarLong from.
-     * @return      The VarLong read from the memory.
-     */
-    long readUnsignedVarLong(MemoryIndex index);
-
-    /**
-     * <p>
-     * Reads a signed VarLong from the memory.</p>
-     * 
-     * @return The VarLong read from the memory.
-     */
-    long readSignedVarLong();
-
-    /**
-     * <p>
-     * Reads a signed VarLong from the memory at the specified index.</p>
-     * 
-     * @param index The index to read the VarLong from.
-     * @return      The VarLong read from the memory.
-     */
-    long readSignedVarLong(MemoryIndex index);
+    double readUDouble();
+    double readUDouble(MemoryIndex index);
 
     /**
      * <p>

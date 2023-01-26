@@ -56,6 +56,7 @@ public class BasicMemoryPool implements MemoryPool {
     @Override
     public void offer(Memory memory) {
         checkMemory(memory);
+        memory.setCloseHandler(null);
         pool.add(memory);
     }
 

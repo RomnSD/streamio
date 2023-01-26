@@ -1,6 +1,7 @@
 package com.broman.streamio.io;
 
 import com.broman.streamio.IStreamio;
+import com.broman.streamio.io.encoding.IntEncoding;
 import com.broman.streamio.serialization.ObjectSerializer;
 
 /**
@@ -14,15 +15,15 @@ public class SimpleMemoryReader extends AbstractMemoryManagement implements Memo
     private IStreamio streamio;
 
     public SimpleMemoryReader(IStreamio streamio) {
-        this(streamio, new MemoryIndex(0), MemoryEncoding.BigEndian);
+        this(streamio, new MemoryIndex(0), MemoryEncoding.BIG_ENDIAN);
     }
 
-    public SimpleMemoryReader(IStreamio streamio, MemoryEncoding endianess) {
-        this(streamio, new MemoryIndex(0), endianess);
+    public SimpleMemoryReader(IStreamio streamio, IntEncoding encoding) {
+        this(streamio, new MemoryIndex(0), encoding);
     }
 
-    public SimpleMemoryReader(IStreamio streamio, MemoryIndex index, MemoryEncoding endianess) {
-        super(index, endianess);
+    public SimpleMemoryReader(IStreamio streamio, MemoryIndex index, IntEncoding encoding) {
+        super(index, encoding);
         if (streamio == null) {
             throw new NullPointerException("Streamio cannot be null");
         }
@@ -41,96 +42,76 @@ public class SimpleMemoryReader extends AbstractMemoryManagement implements Memo
 
     @Override
     public short readShort() {
-        return readShort(index);
+        return encoding.getSInt16(streamio, index);
     }
 
     @Override
     public short readShort(MemoryIndex index) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            return (short) (
-                (streamio.get(index.inc()) & 0xFF) << 8 |
-                (streamio.get(index.inc()) & 0xFF)
-            );
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            return (short) (
-                (streamio.get(index.inc()) & 0xFF) |
-                (streamio.get(index.inc()) & 0xFF) << 8
-            );
-        }
-        return (short) readUnsignedVarInt(index);
+        return encoding.getSInt16(streamio, index);
+    }
+
+    public short readUShort() {
+        return encoding.getUInt16(streamio, index);
+    }
+
+    public short readUShort(MemoryIndex index) {
+        return encoding.getUInt16(streamio, index);
     }
 
     @Override
     public int readMedium() {
-        return readMedium(index);
+        return encoding.getSInt24(streamio, index);
     }
 
     @Override
     public int readMedium(MemoryIndex index) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            return (streamio.get(index.inc()) & 0xFF) << 16 | 
-                   (streamio.get(index.inc()) & 0xFF) << 8  |
-                   (streamio.get(index.inc()) & 0xFF);
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            return (streamio.get(index.inc()) & 0xFF)      |
-                   (streamio.get(index.inc()) & 0xFF) << 8 |
-                   (streamio.get(index.inc()) & 0xFF) << 16;
-        }
-        return readUnsignedVarInt(index);
+        return encoding.getSInt24(streamio, index);
+    }
+
+    public int readUMedium() {
+        return encoding.getUInt24(streamio, index);
+    }
+
+    public int readUMedium(MemoryIndex index) {
+        return encoding.getUInt24(streamio, index);
     }
 
     @Override
     public int readInt() {
-        return readInt(index);
+        return encoding.getSInt32(streamio, index);
     }
 
     @Override
     public int readInt(MemoryIndex index) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            return (streamio.get(index.inc()) & 0xFF) << 24 | 
-                   (streamio.get(index.inc()) & 0xFF) << 16 | 
-                   (streamio.get(index.inc()) & 0xFF) << 8  | 
-                   (streamio.get(index.inc()) & 0xFF)       ;
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            return (streamio.get(index.inc()) & 0xFF)       | 
-                   (streamio.get(index.inc()) & 0xFF) << 8  |
-                   (streamio.get(index.inc()) & 0xFF) << 16 |
-                   (streamio.get(index.inc()) & 0xFF) << 24 ;
-        }
-        return readUnsignedVarInt(index);
+        return encoding.getSInt32(streamio, index);
+    }
+
+    public int readUInt() {
+        return encoding.getUInt32(streamio, index);
+    }
+
+    public int readUInt(MemoryIndex index) {
+        return encoding.getUInt32(streamio, index);
     }
 
     @Override
     public long readLong() {
-        return readLong(index);
+        return encoding.getSInt64(streamio, index);
     }
 
     @Override
     public long readLong(MemoryIndex index) {
-        if (encoding == MemoryEncoding.BigEndian) {
-            return ((long) (streamio.get(index.inc()) & 0xFF) << 56) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 48) | 
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 40) | 
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 32) | 
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 24) | 
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 16) | 
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 8 ) | 
-                   ((long) (streamio.get(index.inc()) & 0xFF)      );
-        }
-        if (encoding == MemoryEncoding.LittleEndian) {
-            return ((long) (streamio.get(index.inc()) & 0xFF)      ) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 8 ) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 16) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 24) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 32) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 40) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 48) |
-                   ((long) (streamio.get(index.inc()) & 0xFF) << 56);
-        }
-        return readUnsignedVarLong(index);
+        return encoding.getSInt64(streamio, index);
+    }
+
+    @Override
+    public long readULong() {
+        return encoding.getUInt64(streamio, index);
+    }
+
+    @Override
+    public long readULong(MemoryIndex index) {
+        return encoding.getUInt64(streamio, index);
     }
 
     @Override
@@ -144,6 +125,16 @@ public class SimpleMemoryReader extends AbstractMemoryManagement implements Memo
     }
 
     @Override
+    public float readUFloat() {
+        return readUFloat(index);
+    }
+
+    @Override
+    public float readUFloat(MemoryIndex index) {
+        return Float.intBitsToFloat(readUInt(index));
+    }
+
+    @Override
     public double readDouble() {
         return readDouble(index);
     }
@@ -151,6 +142,16 @@ public class SimpleMemoryReader extends AbstractMemoryManagement implements Memo
     @Override
     public double readDouble(MemoryIndex index) {
         return Double.longBitsToDouble(readLong(index));
+    }
+
+    @Override
+    public double readUDouble() {
+        return readUDouble(index);
+    }
+
+    @Override
+    public double readUDouble(MemoryIndex index) {
+        return Double.longBitsToDouble(readULong(index));
     }
 
     @Override
@@ -218,74 +219,6 @@ public class SimpleMemoryReader extends AbstractMemoryManagement implements Memo
         return bytes;
     }
 
-    public int readSignedVarInt() {
-        return readSignedVarInt(index);
-    }
-
-    public int readSignedVarInt(MemoryIndex index) {
-        int r = readUnsignedVarInt(index);
-        return (r >>> 1) ^ -(r & 1);
-    }
-
-    @Override
-    public int readUnsignedVarInt() {
-        return readUnsignedVarInt(index);
-    }
-
-    @Override
-    public int readUnsignedVarInt(MemoryIndex index) {
-        int r = 0;
-        int s = 0;
-        int b;
-        
-        do {
-            b = streamio.get(index.inc());
-            r = r | ((b & 0x7F) << (s++ * 7));
-            
-            checkVarLength(s, 5);
-        } while ((b & 0x80) == 0x80);
-
-        return r;
-    }
-
-    @Override
-    public long readSignedVarLong() {
-        return readSignedVarLong(index);
-    }
-
-    @Override
-    public long readSignedVarLong(MemoryIndex index) {
-        long r = readUnsignedVarLong(index);
-        return (r >>> 1) ^ -(r & 1);
-    }
-
-    @Override
-    public long readUnsignedVarLong() {
-        return readUnsignedVarLong(index);
-    }
-
-    @Override
-    public long readUnsignedVarLong(MemoryIndex index) {
-        long r = 0;
-        long s = 0;
-        long b;
-
-        do {
-            b = streamio.get(index.inc());
-            r = r | ((b & 0x7F) << (s++ * 7));
-            
-            checkVarLength(s, 10);
-        } while ((b & 0x80) == 0x80);
-
-        return r;
-    }
-
-    private void checkVarLength(long value, int limit) {
-        if (value > limit) {
-            throw new RuntimeException("VarInt too big. Expected " + limit + " but got " + value);
-        }
-    }
-
     @Override
     public<T> T readObject(Class<T> type) {
         java.util.Objects.requireNonNull(type);
@@ -299,8 +232,8 @@ public class SimpleMemoryReader extends AbstractMemoryManagement implements Memo
         return serializer.unserialize(this);
     }
 
-    public SimpleMemoryReader reader(MemoryEncoding endianess) {
-        return new SimpleMemoryReader(streamio, index, endianess);
+    public SimpleMemoryReader reader(IntEncoding encoding) {
+        return new SimpleMemoryReader(streamio, index, encoding);
     }
 
     public SimpleMemoryReader reader(MemoryIndex index) {

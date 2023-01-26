@@ -1,5 +1,6 @@
 package com.broman.streamio.io;
 
+import com.broman.streamio.io.encoding.IntEncoding;
 import com.broman.streamio.serialization.SerializationRegistry;
 
 /**
@@ -33,7 +34,7 @@ public interface MemoryManagement {
      * 
      * @return The current memory encoding of the memory.
      */
-    MemoryEncoding getEncoding();
+    IntEncoding getEncoding();
 
     /**
      * <p>
@@ -41,7 +42,7 @@ public interface MemoryManagement {
      * 
      * @param encoding The new memory encoding of the memory.
      */
-    void setEncoding(MemoryEncoding encoding);
+    void setEncoding(IntEncoding encoding);
 
     /**
      * <p>

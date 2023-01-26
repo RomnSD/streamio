@@ -45,6 +45,9 @@ public interface MemoryWriter extends MemoryManagement {
      */
     void writeShort(MemoryIndex index, short value);
 
+    void writeUShort(short value);
+    void writeUShort(MemoryIndex index, short value);
+
     /**
      * <p>
      * Writes a medium to the memory.</p>
@@ -61,6 +64,9 @@ public interface MemoryWriter extends MemoryManagement {
      * @param value The medium to write to the memory.
      */
     void writeMedium(MemoryIndex index, int value);
+
+    void writeUMedium(int value);
+    void writeUMedium(MemoryIndex index, int value);
 
     /**
      * <p>
@@ -79,6 +85,9 @@ public interface MemoryWriter extends MemoryManagement {
      */
     void writeInt(MemoryIndex index, int value);
 
+    void writeUInt(int value);
+    void writeUInt(MemoryIndex index, int value);
+
     /**
      * <p>
      * Writes a long to the memory.</p>
@@ -95,6 +104,9 @@ public interface MemoryWriter extends MemoryManagement {
      * @param value The long to write to the memory.
      */
     void writeLong(MemoryIndex index, long value);
+
+    void writeULong(long value);
+    void writeULong(MemoryIndex index, long value);
 
     /**
      * <p>
@@ -113,6 +125,9 @@ public interface MemoryWriter extends MemoryManagement {
      */
     void writeFloat(MemoryIndex index, float value);
 
+    void writeUFloat(float value);
+    void writeUFloat(MemoryIndex index, float value);
+
     /**
      * <p>
      * Writes a double to the memory.</p>
@@ -129,6 +144,9 @@ public interface MemoryWriter extends MemoryManagement {
      * @param value The double to write to the memory.
      */
     void writeDouble(MemoryIndex index, double value);
+
+    void writeUDouble(double value);
+    void writeUDouble(MemoryIndex index, double value);
 
     /**
      * <p>
@@ -232,74 +250,6 @@ public interface MemoryWriter extends MemoryManagement {
      * @param value The byte array to write to the memory.
      */
     void writeBytes(MemoryIndex index, byte[] value);
-
-    /**
-     * <p>
-     * Writes an unsigned VarInt to the memory.</p>
-     * 
-     * @param value The string to write to the memory.
-     */
-    void writeUnsignedVarInt(int value);
-
-    /**
-     * <p>
-     * Writes an unsigned VarInt to the memory at the specified index.</p>
-     * 
-     * @param index The index to write the string to.
-     * @param value The string to write to the memory.
-     */
-    void writeUnsignedVarInt(MemoryIndex index, int value);
-
-    /**
-     * <p>
-     * Writes a signed VarInt to the memory.</p>
-     * 
-     * @param value The string to write to the memory.
-     */
-    void writeSignedVarInt(int value);
-
-    /**
-     * <p>
-     * Writes a signed VarInt to the memory at the specified index.</p>
-     * 
-     * @param index The index to write the string to.
-     * @param value The string to write to the memory.
-     */
-    void writeSignedVarInt(MemoryIndex index, int value);
-
-    /**
-     * <p>
-     * Writes an unsigned VarLong to the memory.</p>
-     * 
-     * @param value The string to write to the memory.
-     */
-    void writeUnsignedVarLong(long value);
-
-    /**
-     * <p>
-     * Writes an unsigned VarLong to the memory at the specified index.</p>
-     * 
-     * @param index The index to write the string to.
-     * @param value The string to write to the memory.
-     */
-    void writeUnsignedVarLong(MemoryIndex index, long value);
-
-    /**
-     * <p>
-     * Writes a signed VarLong to the memory.</p>
-     * 
-     * @param value The string to write to the memory.
-     */
-    void writeSignedVarLong(long value);
-
-    /**
-     * <p>
-     * Writes a signed VarLong to the memory at the specified index.</p>
-     * 
-     * @param index The index to write the string to.
-     * @param value The string to write to the memory.
-     */
-    void writeSignedVarLong(MemoryIndex index, long value);
 
     /**
      * <p>
