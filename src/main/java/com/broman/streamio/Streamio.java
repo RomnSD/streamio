@@ -10,7 +10,7 @@ import com.broman.streamio.memory.HeapMemory;
 import com.broman.streamio.memory.HeapMemoryAllocator;
 import com.broman.streamio.table.DynamicMemoryLookupTable;
 import com.broman.streamio.table.MemoryLookupTable;
-import com.broman.streamio.table.StaticMemoryLookupTable;
+import com.broman.streamio.table.SingleMemoryLookupTable;
 
 /**
  * @author Brayan Roman
@@ -84,15 +84,13 @@ public class Streamio implements IStreamio {
     }
 
     public static Streamio wrap(byte[] bytes) {
-        return new Streamio(bytes.length, bytes.length, null, new StaticMemoryLookupTable(new Memory[]{
-            new HeapMemory(bytes)
-        }));
+        return new Streamio(bytes.length, bytes.length, null, new SingleMemoryLookupTable(new HeapMemory(bytes)));
     }
 
     public static Streamio wrap(ByteBuffer buffer) {
-        return new Streamio(buffer.capacity(), buffer.capacity(), null, new StaticMemoryLookupTable(new Memory[]{
+        return new Streamio(buffer.capacity(), buffer.capacity(), null, new SingleMemoryLookupTable(
             buffer.isDirect() ? new NativeMemory(buffer) : new HeapMemory(buffer.array())
-        }));
+        ));
     }
 
     private final int size;
@@ -105,6 +103,9 @@ public class Streamio implements IStreamio {
     private MemoryPool pool;
 
     Streamio(int size, int blockSize, MemoryAllocator allocator, MemoryLookupTable table) {
+        if (blockSize > size) {
+            blockSize = size;
+        }
         this.size = size;
         this.blockSize = blockSize;
         this.allocator = allocator;
